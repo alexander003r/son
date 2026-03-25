@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Anniversary 🌹</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --rose:       #c0392b;
+      --rose-light: #ff5a47;
+      --gold:       #e8b84b;
+      --gold-dim:   rgba(232,184,75,.82);
+      --dark:       #070102;
+      --card-bg:    rgba(22, 5, 8, 0.92);
+      --border:     rgba(200, 65, 45, 0.38);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      width:100%; min-height:100%;
+      background: var(--dark);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    /* Fondo con profundidad */
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background:
+        radial-gradient(ellipse at 50% 0%,   rgba(180,45,35,.28) 0%, transparent 55%),
+        radial-gradient(ellipse at 15% 85%,   rgba(110,18,28,.18) 0%, transparent 52%),
+        radial-gradient(ellipse at 85% 60%,   rgba(70,8,18,.15)   0%, transparent 52%);
+      pointer-events:none; z-index:0;
+    }
+
+    /* Canvas rosas */
+    #roseCanvas {
+      position:fixed; top:0; left:0;
+      width:100%; height:100%;
+      pointer-events:none; z-index:1;
+    }
+
+    /* ════════════ INTRO ════════════ */
+    #introScreen {
+      position:fixed; inset:0; z-index:10;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      gap:34px;
+      background: radial-gradient(ellipse at center, #180408 0%, #070102 72%);
+      transition: opacity .9s ease, visibility .9s ease;
+    }
+    #introScreen.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+
+    .intro-rose {
+      font-size: clamp(4rem, 15vw, 6.5rem);
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 22px rgba(220,60,50,.8));
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(-5deg); }
+      50%      { transform: translateY(-16px) rotate(6deg); }
+    }
+
+    .intro-title {
+      font-family:'Great Vibes', cursive;
+      font-size: clamp(3.2rem, 12vw, 6.2rem);
+      color: #ff6a55;
+      text-align:center;
+      line-height:1.1;
+      text-shadow:
+        0 0 18px rgba(255,90,71,.9),
+        0 0 50px rgba(200,50,35,.6),
+        0 0 100px rgba(160,30,20,.4);
+      animation: flicker 5s infinite alternate;
+    }
+    .intro-date {
+      text-align:center; margin-top:8px;
+      font-size: clamp(1rem, 4vw, 1.35rem);
+      letter-spacing:.38em;
+      color: var(--gold);
+      font-weight:400;
+    }
+
+    /* Botón */
+    .start-btn {
+      position:relative;
+      background: transparent;
+      border: 1.5px solid rgba(200,65,45,.6);
+      border-radius: 60px;
+      padding: 16px 56px;
+      color:#fff;
+      font-family:'Cormorant Garamond', serif;
+      font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+      letter-spacing:.22em;
+      cursor:pointer;
+      overflow:hidden;
+      text-transform:uppercase;
+      transition: border-color .3s, box-shadow .3s, transform .2s;
+    }
+    .start-btn::before {
+      content:'';
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(192,57,43,.18) 0%, rgba(80,10,20,.35) 100%);
+    }
+    .start-btn::after {
+      content:'';
+      position:absolute; left:-60%; top:0;
+      width:40%; height:100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+      transform:skewX(-20deg);
+      transition:left .5s;
+    }
+    .start-btn:hover {
+      border-color:rgba(255,90,71,.95);
+      box-shadow: 0 0 34px rgba(200,57,43,.6), 0 0 70px rgba(192,57,43,.25), inset 0 0 20px rgba(192,57,43,.12);
+      transform:translateY(-3px);
+    }
+    .start-btn:hover::after { left:120%; }
+    .start-btn:active { transform:translateY(0); }
+    .start-btn span { position:relative; z-index:1; }
+
+    /* ════════════ MAIN ════════════ */
+    #mainScreen {
+      position:relative; z-index:2;
+      min-height:100vh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:38px 20px 52px;
+      opacity:0; transform:translateY(22px);
+      transition: opacity 1s ease .25s, transform 1s ease .25s;
+    }
+    #mainScreen.visible { opacity:1; transform:translateY(0); }
+
+    /* Título principal */
+    .main-title {
+      font-family:'Great Vibes', cursive;
+      font-size: clamp(3.4rem, 13vw, 7.2rem);
+      color: #ff6a55;
+      text-align:center;
+      line-height:1.1;
+      letter-spacing:2px;
+      animation: flicker 6s infinite alternate;
+    }
+    @keyframes flicker {
+      0%   { text-shadow: 0 0 18px rgba(255,90,71,.8),  0 0 48px rgba(200,50,35,.5),  0 0 90px rgba(150,30,20,.3); }
+      40%  { text-shadow: 0 0 28px rgba(255,90,71,1),   0 0 68px rgba(200,50,35,.65), 0 0 115px rgba(150,30,20,.45); }
+      70%  { text-shadow: 0 0 14px rgba(255,90,71,.6),  0 0 36px rgba(200,50,35,.3),  0 0 72px rgba(150,30,20,.2); }
+      100% { text-shadow: 0 0 38px rgba(255,120,90,1),  0 0 80px rgba(200,50,35,.7),  0 0 140px rgba(150,30,20,.55); }
+    }
+
+    /* Fecha — más grande y dorada */
+    .date-line {
+      font-size: clamp(1.15rem, 4.5vw, 1.6rem);
+      letter-spacing:.5em;
+      color: var(--gold);
+      margin-top:10px;
+      font-weight:600;
+      text-shadow: 0 0 14px rgba(232,184,75,.55), 0 0 30px rgba(232,184,75,.25);
+    }
+
+    /* Separador */
+    .divider {
+      width: min(300px, 80vw);
+      height:1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin:22px auto;
+      opacity:.6;
+    }
+
+    /* ════════════════════════════════
+       CONTADOR — 2 filas
+    ════════════════════════════════ */
+    .counter-wrap {
+      display:flex; flex-direction:column;
+      gap:14px;
+      width: min(520px, 94vw);
+      margin-bottom:10px;
+    }
+
+    .c-row {
+      display:flex; align-items:stretch;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius:22px;
+      backdrop-filter:blur(16px);
+      overflow:hidden;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        0 0 0 1px rgba(255,90,71,.04),
+        0 8px 45px rgba(0,0,0,.65);
+    }
+
+    .c-unit {
+      flex:1;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:22px 8px 18px;
+      gap:7px;
+      position:relative;
+    }
+    .c-unit + .c-unit::before {
+      content:'';
+      position:absolute; left:0; top:10%;
+      height:80%; width:1px;
+      background: linear-gradient(180deg, transparent, rgba(200,65,45,.45), transparent);
+    }
+
+    /* Número — blanco puro, grande, nítido */
+    .c-num {
+      font-family:'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 10vw, 4.8rem);
+      font-weight:400;
+      color: #ffffff;
+      line-height:1;
+      letter-spacing:-1px;
+      text-align:center;
+      min-width:2ch;
+      text-shadow:
+        0 0 12px rgba(255,255,255,.35),
+        0 2px 6px rgba(0,0,0,.7);
+      transition: color .2s, text-shadow .2s;
+    }
+    .c-row.row2 .c-num {
+      font-size: clamp(2.5rem, 8.5vw, 4rem);
+    }
+    .c-num.pulse {
+      color: #ffb3a7;
+      text-shadow: 0 0 18px rgba(255,90,71,.9), 0 2px 6px rgba(0,0,0,.7);
+    }
+
+    /* Label — dorado brillante, legible */
+    .c-lbl {
+      font-size: clamp(.68rem, 2.4vw, .88rem);
+      letter-spacing:.36em;
+      color: var(--gold);
+      text-transform:uppercase;
+      font-weight:600;
+      text-shadow: 0 0 8px rgba(232,184,75,.4);
+    }
+
+    /* Frase */
+    .phrase {
+      font-style:italic;
+      font-size: clamp(1.05rem, 4vw, 1.25rem);
+      color: rgba(255,255,255,.45);
+      text-align:center;
+      letter-spacing:.07em;
+      margin-top:16px;
+      text-shadow: 0 1px 4px rgba(0,0,0,.5);
+    }
+    .orn { color:var(--gold); opacity:.45; margin:0 6px; font-size:.9rem; }
+
+    /* Música */
+    .music-section {
+      margin-top:26px;
+      display:flex; flex-direction:column;
+      align-items:center; gap:10px;
+    }
+    .music-note {
+      font-size: clamp(1.15rem, 5vw, 1.55rem);
+      color: var(--gold);
+      letter-spacing:.1em;
+      font-style:italic;
+      text-shadow: 0 0 12px rgba(232,184,75,.35);
+    }
+    #audioPlayer { display:none; width:min(320px,85vw); }
+  </style>
+</head>
+<body>
+
+<canvas id="roseCanvas"></canvas>
+
+<!-- ══ INTRO ══ -->
+<div id="introScreen">
+  <div class="intro-rose">🌹</div>
+  <div>
+    <div class="intro-title">Our Anniversary</div>
+    <div class="intro-date">04 · 17 · 2002</div>
+  </div>
+  <button class="start-btn" onclick="enterSite()">
+    <span>🌹 &nbsp;Open</span>
+  </button>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="mainScreen">
+
+  <div style="text-align:center; margin-bottom:6px;">
+    <div class="main-title">Our Anniversary</div>
+    <div class="date-line">04 · 17 · 2002</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="counter-wrap">
+
+    <!-- Fila 1: Years + Months -->
+    <div class="c-row row1">
+      <div class="c-unit">
+        <span class="c-num" id="years">0</span>
+        <span class="c-lbl">Years</span>
+      </div>
+      <div class="c-unit">
+        <span class="c-num" id="months">0</span>
+        <span class="c-lbl">Months</span>
+      </div>
+    </div>
+
+    <!-- Fila 2: Days · Hours · Min · Sec -->
+    <div class="c-row row2">
+      <div class="c-unit">
+        <span class="c-num" id="days">0</span>
+        <span class="c-lbl">Days</span>
+      </div>
+      <div class="c-unit">
+        <span class="c-num" id="hours">00</span>
+        <span class="c-lbl">Hours</span>
+      </div>
+      <div class="c-unit">
+        <span class="c-num" id="minutes">00</span>
+        <span class="c-lbl">Min</span>
+      </div>
+      <div class="c-unit">
+        <span class="c-num" id="seconds">00</span>
+        <span class="c-lbl">Sec</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="phrase">
+    <span class="orn">✦</span>Together since that perfect day<span class="orn">✦</span>
+  </p>
+
+  <div class="music-section">
+    <!--
+      TO ADD MUSIC: uncomment <audio> and change "your-song.mp3"
+    -->
+    <!--
+    <audio id="audioPlayer" controls loop>
+      <source src="your-song.mp3" type="audio/mpeg">
+    </audio>
+    -->
+    <span class="music-note">♪ your favorite song coming soon ♪</span>
+  </div>
+
+</div>
+
+<script>
+/* ── CONFIG ── */
+const ANNIVERSARY = new Date("2002-04-17T00:00:00");
+
+/* ── INTRO → MAIN ── */
+function enterSite() {
+  document.getElementById("introScreen").classList.add("hidden");
+  setTimeout(() => document.getElementById("mainScreen").classList.add("visible"), 100);
+}
+
+/* ── COUNTER ── */
+let prevSec = -1;
+function tick() {
+  const now = new Date(), start = ANNIVERSARY;
+  let yr = now.getFullYear() - start.getFullYear();
+  let mo = now.getMonth()    - start.getMonth();
+  let da = now.getDate()     - start.getDate();
+  if (da < 0) { mo--; da += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+  if (mo < 0) { yr--; mo += 12; }
+  const ms = now - new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const s  = Math.floor(ms / 1000);
+  const hr = Math.floor(s / 3600);
+  const mn = Math.floor((s % 3600) / 60);
+  const sc = s % 60;
+
+  document.getElementById("years").textContent   = yr;
+  document.getElementById("months").textContent  = mo;
+  document.getElementById("days").textContent    = da;
+  document.getElementById("hours").textContent   = String(hr).padStart(2,"0");
+  document.getElementById("minutes").textContent = String(mn).padStart(2,"0");
+  document.getElementById("seconds").textContent = String(sc).padStart(2,"0");
+
+  if (sc !== prevSec) {
+    const el = document.getElementById("seconds");
+    el.classList.add("pulse"); setTimeout(()=>el.classList.remove("pulse"),230);
+    prevSec = sc;
+  }
+}
+tick(); setInterval(tick, 1000);
+
+/* ── FALLING ROSES ── */
+const canvas = document.getElementById("roseCanvas");
+const ctx    = canvas.getContext("2d");
+const EMOJIS = ["🌹","🌸","🌺","🥀"];
+const COUNT  = 42;
+const rnd    = (a,b) => Math.random()*(b-a)+a;
+
+function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+resize(); window.addEventListener("resize", resize);
+
+class Rose {
+  constructor(init){ this.reset(init); }
+  reset(init){
+    this.e    = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+    this.sz   = rnd(13,32);
+    this.x    = rnd(0, canvas.width);
+    this.y    = init ? rnd(-canvas.height, canvas.height) : rnd(-115,-5);
+    this.vy   = rnd(0.5,1.75);
+    this.vx   = rnd(-0.38,0.38);
+    this.rot  = rnd(0, Math.PI*2);
+    this.rSpd = rnd(-0.017,0.017);
+    this.a    = rnd(0.45,1);
+    this.sw   = rnd(0.28,0.88);
+    this.swO  = rnd(0, Math.PI*2);
+    this.wb   = rnd(0.3,0.9);
+  }
+  update(t){
+    this.y   += this.vy;
+    this.x   += this.vx + Math.sin(t*this.wb+this.swO)*this.sw;
+    this.rot += this.rSpd;
+    if (this.y > canvas.height+42) this.reset(false);
+  }
+  draw(){
+    ctx.save();
+    ctx.globalAlpha=this.a;
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.rot);
+    ctx.font=`${this.sz}px serif`;
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(this.e,0,0);
+    ctx.restore();
+  }
+}
+
+const roses = Array.from({length:COUNT},(_,i)=>new Rose(i<COUNT*.75));
+(function loop(ts){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  roses.forEach(r=>{r.update(ts/1000);r.draw();});
+  requestAnimationFrame(loop);
+})(0);
+</script>
+</body>
+</html>
