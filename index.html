@@ -115,10 +115,18 @@
     .hb:nth-child(2){animation-delay:.18s;font-size:2rem;}
     .hb:nth-child(3){animation-delay:.36s;}
     @keyframes hbeat{0%,100%{transform:scale(1);}15%{transform:scale(1.28);}30%{transform:scale(1);}45%{transform:scale(1.14);}60%{transform:scale(1);}}
-    .phrase{font-style:italic;font-size:clamp(1.15rem,4.5vw,1.45rem);color:rgba(255,255,255,.92);text-align:center;letter-spacing:.09em;text-shadow:0 1px 8px rgba(0,0,0,.78);}
-    .orn{color:var(--gold);opacity:.8;margin:0 7px;font-size:1rem;}
-    .music-tag{margin-top:18px;font-style:italic;font-size:clamp(1.1rem,4.8vw,1.35rem);color:rgba(255,215,25,.92);letter-spacing:.11em;text-shadow:0 0 5px rgba(0,0,0,.35);}
     .bottom-float{margin-top:20px;font-size:1.6rem;opacity:.3;letter-spacing:1rem;animation:float 4s ease-in-out infinite;}
+    .secret-btn{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ff6a55,#c0392b);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:1.5rem;cursor:pointer;z-index:1000;opacity:0;transition:opacity 1s,transform 0.3s;animation:pulseSecret 3s infinite;}
+    .secret-btn.show{opacity:0.7;}
+    .secret-btn.show:hover{opacity:1;transform:scale(1.1);}
+    @keyframes pulseSecret{0%,100%{box-shadow:0 0 10px rgba(255,106,85,.5);}50%{box-shadow:0 0 20px rgba(255,106,85,.8);}}
+    .secret-message{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(0,0,0,.9);color:#fff;padding:20px;border-radius:10px;text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;max-width:300px;z-index:1001;opacity:0;transition:all 0.5s ease;cursor:pointer;}
+    .secret-message.show{transform:translate(-50%,-50%) scale(1);opacity:1;}
+    .secret-message .close-btn{position:absolute;top:5px;right:10px;font-size:1.5rem;color:#fff;cursor:pointer;}
+    /* Arrow hint */
+    .arrow-hint{position:fixed;bottom:35px;right:90px;color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;text-shadow:0 0 5px rgba(0,0,0,.5);z-index:999;animation:bounceArrow 2s infinite;opacity:0;transition:opacity 1s;}
+    .arrow-hint.show{opacity:1;}
+    @keyframes bounceArrow{0%,100%{transform:translateX(0);}50%{transform:translateX(5px);}}
   </style>
 </head>
 <body>
@@ -129,7 +137,7 @@
   <div class="intro-rose">🌹</div>
   <div style="text-align:center;">
     <div class="intro-title">Our Anniversary</div>
-    <div class="intro-date">17 · 04 · 2002</div>
+    <div class="intro-date">17 · 04 · 2004</div>
   </div>
   <button class="elegant-btn" onclick="showLetter()"><span>🌹 &nbsp;Open</span></button>
 </div>
@@ -191,7 +199,7 @@
  
   <div style="text-align:center;margin-bottom:4px;">
     <div class="main-title">Our Anniversary</div>
-    <div class="date-line">17 · 04 · 2002</div>
+    <div class="date-line">17 · 04 · 2004</div>
   </div>
   <div class="rose-divider">
     <div class="rdl l"></div>
@@ -213,17 +221,23 @@
   <div class="heartbeat-row">
     <span class="hb">🌹</span><span class="hb">❤️</span><span class="hb">🌹</span>
   </div>
-  <p class="phrase"><span class="orn">✦</span>Together since that perfect day<span class="orn">✦</span></p>
-  <p class="music-tag" id="musicNote" style="display:none;">♪ playing your song ♪</p>
   <div class="bottom-float">🌹 🌸 🌹</div>
 </div>
 
+<!-- Unique addition: Secret love message -->
+<div class="arrow-hint" id="arrowHint">With all my love →</div>
+<button class="secret-btn" id="secretBtn">❤️</button>
+<div class="secret-message" id="secretMessage">
+  <span class="close-btn" id="closeBtn">×</span>
+  <p id="secretText">My eternal love, Jody. In your arms, I find the peace my soul has always craved. Every heartbeat echoes your name. 🌹</p>
+</div>
+
 <script>
-const ANNIVERSARY=new Date("2002-04-17T00:00:00");
+const ANNIVERSARY=new Date("2004-04-17T00:00:00");
 function showLetter(){document.getElementById("introScreen").classList.add("hidden");setTimeout(()=>document.getElementById("letterScreen").classList.remove("hidden"),50);}
 let opened=false;
 function openLetter(){if(opened)return;opened=true;document.getElementById("envelopeWrap").classList.add("open");document.getElementById("cardOverlay").classList.add("gone");document.getElementById("letterContent").style.opacity="1";setTimeout(()=>document.getElementById("nextWrap").classList.add("show"),1500);}
-function goToMain(){document.getElementById("letterScreen").classList.add("hidden");setTimeout(()=>{document.getElementById("mainScreen").classList.add("visible");const a=document.getElementById("bgMusic");if(a)a.play().then(()=>{document.getElementById("musicNote").style.display="block";}).catch(()=>{});},100);}
+function goToMain(){document.getElementById("letterScreen").classList.add("hidden");setTimeout(()=>{document.getElementById("mainScreen").classList.add("visible");const a=document.getElementById("bgMusic");if(a)a.play().then(()=>{document.getElementById("secretBtn").classList.add("show");document.getElementById("arrowHint").classList.add("show");}).catch(()=>{});},100);}
 let prevSec=-1;
 function tick(){const now=new Date(),s=ANNIVERSARY;let yr=now.getFullYear()-s.getFullYear(),mo=now.getMonth()-s.getMonth(),da=now.getDate()-s.getDate();if(da<0){mo--;da+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}if(mo<0){yr--;mo+=12;}const ms=now-new Date(now.getFullYear(),now.getMonth(),now.getDate());const t=Math.floor(ms/1000),hr=Math.floor(t/3600),mn=Math.floor((t%3600)/60),sc=t%60;document.getElementById("years").textContent=yr;document.getElementById("months").textContent=mo;document.getElementById("days").textContent=da;document.getElementById("hours").textContent=String(hr).padStart(2,"0");document.getElementById("minutes").textContent=String(mn).padStart(2,"0");document.getElementById("seconds").textContent=String(sc).padStart(2,"0");if(sc!==prevSec){const el=document.getElementById("seconds");el.classList.add("pulse");setTimeout(()=>el.classList.remove("pulse"),240);prevSec=sc;}}
 tick();setInterval(tick,1000);
@@ -234,6 +248,34 @@ resize();window.addEventListener("resize",resize);
 class Rose{constructor(i){this.reset(i);}reset(i){this.e=EM[Math.floor(Math.random()*EM.length)];this.sz=rnd(12,30);this.x=rnd(0,canvas.width);this.y=i?rnd(-canvas.height,canvas.height):rnd(-115,-5);this.vy=rnd(.45,1.7);this.vx=rnd(-.38,.38);this.rot=rnd(0,Math.PI*2);this.rS=rnd(-.016,.016);this.a=rnd(.4,1);this.sw=rnd(.25,.85);this.swO=rnd(0,Math.PI*2);this.wb=rnd(.3,.9);}update(t){this.y+=this.vy;this.x+=this.vx+Math.sin(t*this.wb+this.swO)*this.sw;this.rot+=this.rS;if(this.y>canvas.height+42)this.reset(false);}draw(){ctx.save();ctx.globalAlpha=this.a;ctx.translate(this.x,this.y);ctx.rotate(this.rot);ctx.font=`${this.sz}px serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(this.e,0,0);ctx.restore();}}
 const roses=Array.from({length:N},(_,i)=>new Rose(i<N*.75));
 (function loop(ts){ctx.clearRect(0,0,canvas.width,canvas.height);roses.forEach(r=>{r.update(ts/1000);r.draw();});requestAnimationFrame(loop);})(0);
+
+// Unique addition: Secret button functionality
+const secretMessages = [
+  "My eternal love, Jody. In your arms, I find the peace my soul has always craved. Every heartbeat echoes your name. 🌹",
+  "With you, Jody, every sunrise is a promise, every sunset a memory. You are my forever. 💕",
+  "In the quiet moments, it's your smile that lights my world. I cherish you more than words can say. 🌸",
+  "Jody, you are the melody in my heart, the rhythm of my days. Loving you is my greatest joy. ❤️",
+  "Every day with you feels like a new chapter in our beautiful story. I love you endlessly. 🌹",
+  "You are the warmth in my coldest nights, the light in my darkest days. My love for you knows no bounds. 💖",
+  "In your eyes, I see the future we will build together. You are my everything, Jody. 🌟",
+  "With every breath, I whisper your name. You are the reason my heart beats. Forever yours. 🌹",
+  "Jody, your love is the anchor that keeps me grounded, the wings that let me soar. I adore you. 💕",
+  "Through all the seasons of life, my love for you only grows stronger. You are my eternal flame. ❤️"
+];
+document.getElementById('secretBtn').addEventListener('click', function() {
+  const msg = document.getElementById('secretMessage');
+  const text = document.getElementById('secretText');
+  text.textContent = secretMessages[Math.floor(Math.random() * secretMessages.length)];
+  msg.classList.add('show');
+});
+document.getElementById('closeBtn').addEventListener('click', function() {
+  document.getElementById('secretMessage').classList.remove('show');
+});
+document.getElementById('secretMessage').addEventListener('click', function(e) {
+  if (e.target !== document.getElementById('closeBtn')) {
+    document.getElementById('secretMessage').classList.remove('show');
+  }
+});
 </script>
 </body>
 </html>
